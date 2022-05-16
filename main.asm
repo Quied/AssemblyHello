@@ -1,33 +1,41 @@
-section .data
+section .data				
+		userMsg db 'Num: '			; Take a num
+		lenUserMsg equ $=userMsg	; msg size
+		dispMsg db 'This:'
+		lenDispMsg equ $-dispMsg
 
-global _start
 
-_start:
+section .bss	; empty data
+		num resb 5
 
+section .text
+		global _start
 
-mov edx, len
+_start:		; take data
+		mov eax, 4
+		mov ebx, 1
+		mov ecx, userMsg
+		mov edx, lenUserMsg
+		int 80h
 
-mov ecx, msg
-mov ebx, 1
-mov eax, 4
-int 0x80
+		; read and save
+		mov eax, 3 
+		mov ecx, 2
+		mov ecx, num
+		mov edx, 5 ; 5 bytes
+		int 80h
+		
+		; out num
+		mov eax, 4
+		mov ebx, 1
+		mov ecx, num
+		mov edx, 5
+		int 80h
 
-mov eax, 1
-int 0x80
-
-section .data
-msg db 'Hello, World', 0xa
-len equ $ - msg
-
-mov eax, 1 ; sys_exit
-int 0x80 
-
-mov edx, 4   ; size of msg
-mov ecx, msg ; msg for out
-mov ebx, 1   ; file desriptor
-mov eax, 4   ; sys_write
-int 0x80     ; kernel
-
+		; exit
+		mov eax, 1
+		mov ebx, 0
+		int 80h
 
 
 
